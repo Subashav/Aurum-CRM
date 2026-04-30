@@ -20,6 +20,7 @@ import {
 import { cn } from '@/lib/cn';
 import { useState, useEffect } from 'react';
 import { ThemeToggle } from '@/components/navigation/theme-toggle';
+import { CommandPalette } from '@/components/navigation/command-palette';
 import { Logo } from '@/components/navigation/logo';
 
 const navItems = [
