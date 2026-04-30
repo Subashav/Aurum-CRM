@@ -50,11 +50,19 @@ export function PipelineKanban() {
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={() => setSortConfig('createdAt', sortOrder === 'desc' ? 'asc' : 'desc')}
-            className="gap-2 h-8 font-bold text-[10px] uppercase tracking-wider bg-muted/50 border-border/40 hover:bg-muted"
+            onClick={() => {
+              if (sortBy === 'createdAt') {
+                setSortConfig('followUpAt', 'desc');
+              } else if (sortBy === 'followUpAt' && sortOrder === 'desc') {
+                setSortConfig('followUpAt', 'asc');
+              } else {
+                setSortConfig('createdAt', 'desc');
+              }
+            }}
+            className="gap-2 h-8 font-bold text-[10px] uppercase tracking-wider bg-muted/50 border-border/40 hover:bg-muted min-w-[140px]"
           >
             {sortOrder === 'asc' ? <SortAsc size={14} /> : <SortDesc size={14} />}
-            Date: {sortOrder === 'desc' ? 'Newest First' : 'Oldest First'}
+            {sortBy === 'createdAt' ? 'Date Added' : 'Calendar'}: {sortOrder === 'desc' ? 'Newest' : 'Oldest'}
           </Button>
 
           <Button variant="outline" size="sm" className="hidden md:flex gap-2 h-8 aurum-gradient text-white border-none hover:opacity-90 shadow-sm">

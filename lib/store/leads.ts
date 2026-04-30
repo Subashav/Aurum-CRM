@@ -195,8 +195,23 @@ export const useLeadsStore = create<LeadsStore>()(
               bVal = p[b.priority as keyof typeof p] || 0;
               break;
             case 'updatedBy': aVal = (a.updatedBy || '').toLowerCase(); bVal = (b.updatedBy || '').toLowerCase(); break;
-            case 'followUpAt': aVal = a.followUpAt; bVal = b.followUpAt; break;
-            case 'createdAt': aVal = a.createdAt; bVal = b.createdAt; break;
+            case 'followUpAt': 
+              // Try to parse followUpAt into a timestamp for accurate sorting
+              const parseDate = (s: string) => {
+                if (!s) return 0;
+                if (s.includes('Today')) return Date.now();
+                if (s.includes('Tomorrow')) return Date.now() + 86400000;
+                if (s.includes('Yesterday')) return Date.now() - 86400000;
+                const d = new Date(s);
+                return isNaN(d.getTime()) ? 0 : d.getTime();
+              };
+              aVal = parseDate(a.followUpAt); 
+              bVal = parseDate(b.followUpAt); 
+              break;
+            case 'createdAt': 
+              aVal = a.createdAt ? new Date(a.createdAt).getTime() : 0; 
+              bVal = b.createdAt ? new Date(b.createdAt).getTime() : 0; 
+              break;
             default: aVal = a.id; bVal = b.id; break;
           }
 
