@@ -20,7 +20,7 @@ export default function LoginPage() {
     
     // Immediate feedback and reliable redirection
     toast.success('Successfully logged in');
-    router.replace('/');
+    router.replace('/dashboard');
   };
 
   return (
