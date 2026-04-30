@@ -3,7 +3,7 @@ import { cn } from '@/lib/cn';
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: 'primary' | 'secondary' | 'ghost' | 'outline';
-  size?: 'default' | 'icon';
+  size?: 'default' | 'icon' | 'sm' | 'lg';
   asChild?: boolean;
 };
 
@@ -16,12 +16,19 @@ export function Button({ className, variant = 'primary', size = 'default', ...pr
     outline: 'border border-white/10 bg-transparent text-inherit hover:bg-white/5',
   }[variant];
 
+  const sizeStyles = {
+    default: 'px-4 py-2 text-sm font-semibold',
+    sm: 'px-3 py-1.5 text-xs font-semibold',
+    lg: 'px-6 py-3 text-lg font-bold',
+    icon: 'h-10 w-10',
+  }[size];
+
   if (props.asChild && React.isValidElement(props.children)) {
     const child = React.Children.only(props.children) as any;
     return React.cloneElement(child, {
       className: cn(
         'inline-flex items-center justify-center gap-2 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98]',
-        size === 'default' ? 'px-4 py-2 text-sm font-semibold' : 'h-10 w-10',
+        sizeStyles,
         styles,
         className,
         child.props?.className
@@ -35,7 +42,7 @@ export function Button({ className, variant = 'primary', size = 'default', ...pr
     <button
       className={cn(
         'inline-flex items-center justify-center gap-2 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98]',
-        size === 'default' ? 'px-4 py-2 text-sm font-semibold' : 'h-10 w-10',
+        sizeStyles,
         styles,
         className,
       )}
