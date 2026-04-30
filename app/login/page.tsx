@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -18,11 +18,9 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     
-    setTimeout(() => {
-      setIsLoading(false);
-      toast.success('Successfully logged in');
-      router.push('/');
-    }, 1200);
+    // Immediate feedback and reliable redirection
+    toast.success('Successfully logged in');
+    router.replace('/');
   };
 
   return (
