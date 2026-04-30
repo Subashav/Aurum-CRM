@@ -37,7 +37,17 @@ const navItems = [
   ]}
 ];
 
-export function WorkspaceShell({ title, children }: { title: string; children: React.ReactNode }) {
+export function WorkspaceShell({ 
+  title, 
+  children,
+  subtitle,
+  eyebrow 
+}: { 
+  title: string; 
+  children: React.ReactNode;
+  subtitle?: string;
+  eyebrow?: string;
+}) {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
