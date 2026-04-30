@@ -17,17 +17,17 @@ export function Button({ className, variant = 'primary', size = 'default', ...pr
   }[variant];
 
   if (props.asChild && React.isValidElement(props.children)) {
-    const child = React.Children.only(props.children) as React.ReactElement;
+    const child = React.Children.only(props.children) as any;
     return React.cloneElement(child, {
       className: cn(
         'inline-flex items-center justify-center gap-2 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50 active:scale-[0.98]',
         size === 'default' ? 'px-4 py-2 text-sm font-semibold' : 'h-10 w-10',
         styles,
         className,
-        child.props.className
+        child.props?.className
       ),
       ...props,
-      children: child.props.children,
+      children: child.props?.children,
     } as any);
   }
 
