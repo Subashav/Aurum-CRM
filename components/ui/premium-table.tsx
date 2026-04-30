@@ -39,51 +39,58 @@ export function PremiumTable({ columns, data, onUpdate }: Props) {
   };
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full w-full text-left">
-        <thead className="sticky top-0 z-10" style={{ backgroundColor: 'var(--panel)', borderBottom: '1px solid var(--border)' }}>
+    <div className="overflow-x-auto scrollbar-hide">
+      <table className="min-w-full w-full text-left border-separate border-spacing-0">
+        <thead className="sticky top-0 z-10 bg-card">
           <tr>
             {columns.map((col) => (
-              <th key={col.key} className={cn('px-4 py-3 text-xs font-medium text-muted uppercase tracking-[0.14em]')} style={{ width: col.width }}>
+              <th 
+                key={col.key} 
+                className={cn(
+                  'px-4 py-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest border-b border-border'
+                )} 
+                style={{ width: col.width }}
+              >
                 {col.title}
               </th>
             ))}
           </tr>
         </thead>
 
-        <tbody>
+        <tbody className="divide-y divide-border/40">
           {data.length > 0 ? data.map((row) => (
-            <tr key={row.id} className="group border-t border-white/[0.03] hover:bg-white/[0.02] transition-colors">
+            <tr key={row.id} className="group transition-colors hover:bg-muted/30">
               {columns.map((col) => {
                 const value = row[col.key];
                 const inEdit = editing && editing.id === row.id && editing.key === col.key;
 
                 return (
-                  <td key={col.key} className="px-4 py-4 align-middle text-sm" style={{ color: 'var(--fg-color)' }}>
+                  <td key={col.key} className="px-4 py-4 align-middle text-sm text-foreground">
                     {inEdit ? (
                       <div className="flex items-center gap-2">
                         {col.editor === 'select' && col.options ? (
                           <select 
                             value={draft} 
                             onChange={(e) => setDraft(e.target.value)} 
-                            className="bg-black border border-white/20 rounded px-2 py-1 text-xs focus:outline-none focus:border-amber-500"
+                            className="bg-background border border-border rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
                           >
                             {col.options.map(o => <option key={o} value={o}>{o}</option>)}
                           </select>
                         ) : (
                           <input 
-                            className="bg-black border border-white/20 rounded px-2 py-1 text-xs focus:outline-none focus:border-amber-500" 
+                            className="bg-background border border-border rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary" 
                             value={draft} 
                             onChange={(e) => setDraft(e.target.value)} 
                             onKeyDown={(e) => e.key === 'Enter' && saveEdit(row.id, col.key)}
+                            autoFocus
                           />
                         )}
-                        <button className="text-[10px] font-bold uppercase text-amber-500" onClick={() => saveEdit(row.id, col.key)}>Save</button>
+                        <button className="text-[10px] font-black uppercase text-primary hover:text-primary/80" onClick={() => saveEdit(row.id, col.key)}>Save</button>
                       </div>
                     ) : col.render ? (
                       col.render(row)
                     ) : (
-                      <div onDoubleClick={() => col.editable && startEdit(row.id, col.key, value)} className={cn(col.editable && "cursor-pointer hover:text-amber-300 transition-colors")}>
+                      <div onDoubleClick={() => col.editable && startEdit(row.id, col.key, value)} className={cn(col.editable && "cursor-pointer hover:text-primary transition-colors")}>
                         {value ?? '-'}
                       </div>
                     )}

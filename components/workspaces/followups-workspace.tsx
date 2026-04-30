@@ -1,15 +1,17 @@
 'use client';
 
-import { BellRing, Calendar, CalendarDays, Clock3, PhoneCall, CheckCircle2, AlertCircle } from 'lucide-react';
+import { BellRing, Calendar, CalendarDays, Clock3, PhoneCall, CheckCircle2, AlertCircle, ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { useLeadsStore } from '@/lib/store/leads';
 import Link from 'next/link';
+import { cn } from '@/lib/cn';
+import { toast } from 'sonner';
 
 export function FollowupsWorkspace() {
   const { leads } = useLeadsStore();
 
-  // Get leads that need follow-ups (sorted by follow-up date)
   const pendingFollowups = leads
     .filter((lead) => lead.followUpAt)
     .sort((a, b) => new Date(a.followUpAt).getTime() - new Date(b.followUpAt).getTime());
@@ -21,186 +23,143 @@ export function FollowupsWorkspace() {
   );
   const upcoming = pendingFollowups.filter((lead) => new Date(lead.followUpAt) > new Date());
 
-  const markComplete = (id: string) => {
-    alert(`Marked ${id} as completed!`);
+  const markComplete = (name: string) => {
+    toast.success(`Follow-up with ${name} marked as complete`);
   };
 
   return (
-    <div className="space-y-6">
-      <Card className="border border-white/10 bg-surface/90 p-6">
-        <p className="text-[11px] uppercase tracking-[0.28em] text-white/40 mb-2">Workspace / Follow-ups</p>
-        <h3 className="text-3xl font-semibold text-white mb-2">Follow-up Center</h3>
-        <p className="text-white/55">Manage and track all your pending follow-ups with timeline-based prioritization.</p>
-      </Card>
-
-      {/* Quick Stats */}
-      <div className="grid grid-cols-3 gap-4">
-        <Card className="p-4 border border-red-500/30 bg-red-500/10">
-          <p className="text-sm text-red-300 mb-2 flex items-center gap-2">
-            <AlertCircle className="h-4 w-4" />
-            Overdue
-          </p>
-          <p className="text-3xl font-bold text-white">{overdue.length}</p>
-          <p className="text-xs text-red-300/70 mt-1">Needs immediate action</p>
-        </Card>
-
-        <Card className="p-4 border border-amber-500/30 bg-amber-500/10">
-          <p className="text-sm text-amber-300 mb-2 flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
-            Due Today
-          </p>
-          <p className="text-3xl font-bold text-white">{dueToday.length}</p>
-          <p className="text-xs text-amber-300/70 mt-1">Schedule for today</p>
-        </Card>
-
-        <Card className="p-4 border border-blue-500/30 bg-blue-500/10">
-          <p className="text-sm text-blue-300 mb-2 flex items-center gap-2">
-            <Clock3 className="h-4 w-4" />
-            Upcoming
-          </p>
-          <p className="text-3xl font-bold text-white">{upcoming.length}</p>
-          <p className="text-xs text-blue-300/70 mt-1">Scheduled</p>
-        </Card>
+    <div className="space-y-8 pb-12">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-2">
+        <div>
+          <h3 className="text-2xl font-black tracking-tight italic">Follow-up Center</h3>
+          <p className="text-sm text-muted-foreground font-medium">Timeline-based prioritization for pending sales actions.</p>
+        </div>
+        <div className="flex items-center gap-2">
+           <Button variant="outline" size="sm" className="h-9 rounded-xl font-bold uppercase tracking-widest text-[10px] gap-2">
+             <CalendarDays size={14} />
+             View Calendar
+           </Button>
+        </div>
       </div>
 
-      {/* Overdue */}
-      {overdue.length > 0 && (
-        <Card className="p-6 border border-red-500/20 bg-red-500/5">
-          <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <AlertCircle className="h-5 w-5 text-red-400" />
-            Overdue Follow-ups ({overdue.length})
-          </h4>
-          <div className="space-y-3">
-            {overdue.map((lead) => (
-              <div
-                key={lead.id}
-                className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-red-500/20 hover:bg-white/10 transition"
-              >
-                <Link href={`/leads/${lead.id}`} className="flex-1">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-red-500/20 flex items-center justify-center">
-                      <AlertCircle className="h-5 w-5 text-red-400" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-white">{lead.name}</p>
-                      <p className="text-xs text-white/50">{lead.company} • {lead.role}</p>
-                      <p className="text-xs text-red-400 mt-1">
-                        Due: {new Date(lead.followUpAt).toDateString()}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-                <button
-                  onClick={() => markComplete(lead.id)}
-                  className="px-3 py-2 rounded-lg bg-red-500/20 text-red-300 text-sm font-medium hover:bg-red-500/30 transition"
-                >
-                  Complete
-                </button>
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[
+          { label: 'Overdue', value: overdue.length, icon: AlertCircle, color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/20' },
+          { label: 'Due Today', value: dueToday.length, icon: Calendar, color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
+          { label: 'Upcoming', value: upcoming.length, icon: Clock3, color: 'text-sky-500', bg: 'bg-sky-500/10', border: 'border-sky-500/20' },
+        ].map((stat, i) => (
+          <Card key={i} className={cn("p-6 border transition-all hover:scale-[1.02]", stat.border, stat.bg)}>
+            <div className="flex items-center justify-between mb-4">
+              <div className={cn("p-2 rounded-lg bg-background shadow-sm", stat.color)}>
+                <stat.icon size={18} />
               </div>
-            ))}
-          </div>
-        </Card>
-      )}
+              <Badge variant="outline" className="border-background/50 text-[8px] font-black uppercase">Priority</Badge>
+            </div>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">{stat.label}</p>
+            <h3 className="text-4xl font-black tracking-tighter mt-1">{stat.value}</h3>
+          </Card>
+        ))}
+      </div>
 
-      {/* Due Today */}
-      {dueToday.length > 0 && (
-        <Card className="p-6 border border-amber-500/20 bg-amber-500/5">
-          <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-amber-400" />
-            Due Today ({dueToday.length})
-          </h4>
-          <div className="space-y-3">
-            {dueToday.map((lead) => (
-              <div
-                key={lead.id}
-                className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-amber-500/20 hover:bg-white/10 transition"
-              >
-                <Link href={`/leads/${lead.id}`} className="flex-1">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-amber-500/20 flex items-center justify-center">
-                      <Calendar className="h-5 w-5 text-amber-400" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-white">{lead.name}</p>
-                      <p className="text-xs text-white/50">{lead.company} • {lead.role}</p>
-                      <Badge className="mt-2 text-xs bg-amber-500/20 border-amber-500/40 text-amber-300">
-                        {lead.stage} • {lead.status}
-                      </Badge>
-                    </div>
-                  </div>
-                </Link>
-                <button
-                  onClick={() => markComplete(lead.id)}
-                  className="px-3 py-2 rounded-lg bg-amber-500/20 text-amber-300 text-sm font-medium hover:bg-amber-500/30 transition"
-                >
-                  Complete
-                </button>
-              </div>
-            ))}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Urgent Followups */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between px-2">
+             <h4 className="text-xs font-black uppercase tracking-[0.2em] text-rose-500">Immediate Action Required</h4>
+             <span className="text-[10px] font-bold text-muted-foreground/40">{overdue.length + dueToday.length} items</span>
           </div>
-        </Card>
-      )}
-
-      {/* Upcoming */}
-      {upcoming.length > 0 && (
-        <Card className="p-6 border border-blue-500/20 bg-blue-500/5">
-          <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <Clock3 className="h-5 w-5 text-blue-400" />
-            Upcoming Follow-ups ({upcoming.length})
-          </h4>
           <div className="space-y-3">
-            {upcoming.slice(0, 5).map((lead) => (
-              <div
-                key={lead.id}
-                className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-blue-500/20 hover:bg-white/10 transition"
-              >
-                <Link href={`/leads/${lead.id}`} className="flex-1">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-                      <Clock3 className="h-5 w-5 text-blue-400" />
+            {[...overdue, ...dueToday].map((lead) => (
+              <Card key={lead.id} className="p-4 bg-card/60 hover:bg-card border-border hover:border-primary/20 transition-all group overflow-hidden relative">
+                <div className="absolute top-0 right-0 h-1 w-full bg-rose-500/20" />
+                <div className="flex items-center justify-between gap-4">
+                  <Link href={`/leads/${lead.id}`} className="flex-1 min-w-0">
+                    <div className="flex items-center gap-4">
+                      <div className="h-10 w-10 rounded-full aurum-gradient flex items-center justify-center text-xs font-black text-white shadow-lg shadow-primary/20 shrink-0">
+                        {lead.name[0]}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-bold text-foreground group-hover:text-primary transition-colors truncate tracking-tight">{lead.name}</p>
+                        <p className="text-[10px] text-muted-foreground font-medium truncate uppercase tracking-widest">{lead.company}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-white">{lead.name}</p>
-                      <p className="text-xs text-white/50">{lead.company} • {lead.role}</p>
-                      <p className="text-xs text-blue-400 mt-1">
-                        Due: {new Date(lead.followUpAt).toDateString()}
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-                <Badge className="text-xs bg-blue-500/20 border-blue-500/40 text-blue-300">
-                  In {Math.ceil((new Date(lead.followUpAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} days
-                </Badge>
-              </div>
+                  </Link>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => markComplete(lead.name)}
+                    className="rounded-xl px-4 h-9 font-bold uppercase tracking-widest text-[9px] hover:bg-emerald-500/10 hover:text-emerald-500 hover:border-emerald-500/20"
+                  >
+                    Resolve
+                  </Button>
+                </div>
+              </Card>
             ))}
-            {upcoming.length > 5 && (
-              <p className="text-center text-sm text-white/50 py-2">
-                +{upcoming.length - 5} more scheduled
-              </p>
+            {[...overdue, ...dueToday].length === 0 && (
+              <div className="py-12 border-2 border-dashed border-border/40 rounded-2xl flex flex-col items-center justify-center">
+                 <CheckCircle2 className="h-8 w-8 text-emerald-500/20 mb-3" />
+                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/30">All actions resolved</p>
+              </div>
             )}
           </div>
-        </Card>
-      )}
+        </div>
 
-      {/* Action Cards */}
-      <div className="grid grid-cols-3 gap-4">
-        <Card className="p-4">
-          <BellRing className="h-5 w-5 text-white/60 mb-2" />
-          <p className="text-sm font-medium text-white">Reminder automation</p>
-          <p className="text-xs text-white/50 mt-1">Set up email & SMS reminders</p>
-        </Card>
+        {/* Scheduled / Upcoming */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between px-2">
+             <h4 className="text-xs font-black uppercase tracking-[0.2em] text-sky-500">Scheduled Reminders</h4>
+             <span className="text-[10px] font-bold text-muted-foreground/40">{upcoming.length} items</span>
+          </div>
+          <div className="space-y-3">
+            {upcoming.slice(0, 4).map((lead) => (
+              <Card key={lead.id} className="p-4 bg-muted/20 hover:bg-muted/30 border-border/40 transition-all group">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4 flex-1 min-w-0">
+                    <div className="h-9 w-9 rounded-xl bg-background flex items-center justify-center text-sky-500 shadow-sm border border-border">
+                       <Clock3 size={16} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-bold text-foreground truncate tracking-tight">{lead.name}</p>
+                      <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">
+                        {new Date(lead.followUpAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                      </p>
+                    </div>
+                  </div>
+                  <Link href={`/leads/${lead.id}`}>
+                    <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 text-muted-foreground hover:text-primary">
+                      <ChevronRight size={14} />
+                    </Button>
+                  </Link>
+                </div>
+              </Card>
+            ))}
+          </div>
+          <Button variant="ghost" className="w-full text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground">
+            View Full Timeline
+          </Button>
+        </div>
+      </div>
 
-        <Card className="p-4">
-          <PhoneCall className="h-5 w-5 text-white/60 mb-2" />
-          <p className="text-sm font-medium text-white">Call logging</p>
-          <p className="text-xs text-white/50 mt-1">Record all interactions</p>
-        </Card>
-
-        <Card className="p-4">
-          <CalendarDays className="h-5 w-5 text-white/60 mb-2" />
-          <p className="text-sm font-medium text-white">Calendar sync</p>
-          <p className="text-xs text-white/50 mt-1">Sync with Google Calendar</p>
-        </Card>
+      {/* Integration Shortcuts */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[
+          { label: 'Reminder automation', desc: 'Sync with Email & SMS', icon: BellRing },
+          { label: 'Interaction Logs', desc: 'Auto-record all outreach', icon: PhoneCall },
+          { label: 'Calendar Bridge', desc: 'Google & Outlook Sync', icon: CalendarDays },
+        ].map((item, i) => (
+          <Card key={i} className="p-4 hover:border-primary/20 transition-all cursor-pointer group bg-card/40">
+            <div className="flex items-center gap-4">
+               <div className="p-2 rounded-lg bg-muted text-muted-foreground group-hover:text-primary transition-colors">
+                  <item.icon size={18} />
+               </div>
+               <div>
+                  <p className="text-[11px] font-black uppercase tracking-tight">{item.label}</p>
+                  <p className="text-[10px] text-muted-foreground">{item.desc}</p>
+               </div>
+            </div>
+          </Card>
+        ))}
       </div>
     </div>
   );

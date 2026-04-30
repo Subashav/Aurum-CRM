@@ -10,12 +10,11 @@ type BadgeProps = PropsWithChildren<{
 export function Badge({ children, className, variant = 'default' }: BadgeProps) {
   return (
     <span
-      className={cn('inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em]', className)}
-      style={{
-        borderColor: 'var(--border)',
-        backgroundColor: 'var(--panel-strong)',
-        color: 'var(--fg-color)'
-      }}
+      className={cn(
+        'inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest transition-all',
+        variant === 'outline' ? 'border-border bg-transparent text-muted-foreground' : 'border-primary/20 bg-primary/10 text-primary',
+        className
+      )}
     >
       {children}
     </span>

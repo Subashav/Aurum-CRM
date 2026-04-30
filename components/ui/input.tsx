@@ -7,13 +7,10 @@ type InputProps = InputHTMLAttributes<HTMLInputElement>;
 export function Input({ className, ...props }: InputProps) {
   return (
     <input
-      className={cn('h-11 w-full rounded-full border px-4 text-sm outline-none placeholder:text-muted transition-colors', className)}
-      style={{
-        backgroundColor: 'transparent',
-        borderColor: 'var(--border)',
-        color: 'var(--fg-color)',
-        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.02)'
-      }}
+      className={cn(
+        'h-11 w-full rounded-xl border border-border bg-muted/20 px-4 text-sm text-foreground outline-none placeholder:text-muted-foreground/50 transition-all focus:border-primary/30 focus:bg-background',
+        className
+      )}
       {...props}
     />
   );

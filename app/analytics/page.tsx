@@ -45,65 +45,67 @@ export default function AnalyticsPage() {
       eyebrow="Intelligence Engine" 
       subtitle="Deep insights into pipeline velocity and conversion health."
     >
-      <div className="space-y-6">
+      <div className="space-y-6 pb-10">
         {/* Metric Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: 'Avg. Response Time', value: '1.2h', delta: '-15%', icon: Clock, color: 'text-sky-400' },
-            { label: 'Lead Velocity', value: '+42%', delta: '+12% wk', icon: TrendingUp, color: 'text-amber-400' },
-            { label: 'Conversion Efficiency', value: '28.4%', delta: '+4.2%', icon: Target, color: 'text-emerald-400' },
-            { label: 'System Uptime', value: '99.99%', delta: 'Live', icon: Zap, color: 'text-violet-400' },
+            { label: 'Avg. Response Time', value: '1.2h', delta: '-15%', icon: Clock, color: 'text-sky-500' },
+            { label: 'Lead Velocity', value: '+42%', delta: '+12% wk', icon: TrendingUp, color: 'text-amber-500' },
+            { label: 'Conversion Efficiency', value: '28.4%', delta: '+4.2%', icon: Target, color: 'text-emerald-500' },
+            { label: 'System Uptime', value: '99.99%', delta: 'Live', icon: Zap, color: 'text-violet-500' },
           ].map((m, i) => (
-            <Card key={i} className="p-5 bg-white/5 border-white/10 glass-edge">
+            <Card key={i} className="p-5 bg-card/40 border-border hover:border-primary/20 transition-all">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-[10px] font-black uppercase tracking-widest text-white/30">{m.label}</p>
-                <m.icon className={`h-4 w-4 ${m.color}`} />
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{m.label}</p>
+                <div className={`${m.color} bg-current/10 p-1.5 rounded-lg`}>
+                  <m.icon className="h-3.5 w-3.5" />
+                </div>
               </div>
-              <h3 className="text-2xl font-bold text-white">{m.value}</h3>
-              <p className="text-[10px] text-white/40 mt-1 font-bold">{m.delta}</p>
+              <h3 className="text-2xl font-bold">{m.value}</h3>
+              <p className="text-[10px] text-muted-foreground/60 mt-1 font-bold">{m.delta}</p>
             </Card>
           ))}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Conversion Chart */}
-          <Card className="p-6 bg-white/5 border-white/10 glass-edge">
-            <h4 className="text-lg font-bold text-white mb-6">Conversion Funnel Volume</h4>
+          <Card className="p-6 bg-card border-border">
+            <h4 className="text-lg font-bold mb-6">Conversion Funnel Volume</h4>
             <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={conversionData}>
                   <defs>
                     <linearGradient id="colorConv" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#fbbf24" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#fbbf24" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
-                  <XAxis dataKey="name" stroke="#ffffff20" fontSize={10} axisLine={false} tickLine={false} />
-                  <YAxis stroke="#ffffff20" fontSize={10} axisLine={false} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                  <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={10} axisLine={false} tickLine={false} dy={10} />
+                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} axisLine={false} tickLine={false} />
                   <Tooltip 
-                    contentStyle={{ backgroundColor: '#0d0d0d', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                    contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '12px' }}
                     itemStyle={{ fontSize: '12px' }}
                   />
-                  <Area type="monotone" dataKey="conv" stroke="#fbbf24" fillOpacity={1} fill="url(#colorConv)" strokeWidth={2} />
+                  <Area type="monotone" dataKey="conv" stroke="hsl(var(--primary))" fillOpacity={1} fill="url(#colorConv)" strokeWidth={2} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </Card>
 
           {/* Velocity Chart */}
-          <Card className="p-6 bg-white/5 border-white/10 glass-edge">
-            <h4 className="text-lg font-bold text-white mb-6">Real-time Lead Velocity</h4>
+          <Card className="p-6 bg-card border-border">
+            <h4 className="text-lg font-bold mb-6">Real-time Lead Velocity</h4>
             <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={velocityData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
-                  <XAxis dataKey="time" stroke="#ffffff20" fontSize={10} axisLine={false} tickLine={false} />
-                  <YAxis stroke="#ffffff20" fontSize={10} axisLine={false} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+                  <XAxis dataKey="time" stroke="hsl(var(--muted-foreground))" fontSize={10} axisLine={false} tickLine={false} dy={10} />
+                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} axisLine={false} tickLine={false} />
                   <Tooltip 
-                    contentStyle={{ backgroundColor: '#0d0d0d', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                    contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '12px' }}
                   />
-                  <Line type="stepAfter" dataKey="value" stroke="#38bdf8" strokeWidth={3} dot={false} />
+                  <Line type="stepAfter" dataKey="value" stroke="hsl(var(--sky-500, #0ea5e9))" strokeWidth={3} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -111,15 +113,18 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Insight Section */}
-        <Card className="p-8 bg-gradient-to-r from-amber-500/10 to-transparent border-amber-500/10">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="h-16 w-16 rounded-2xl bg-amber-500 flex items-center justify-center shrink-0 shadow-2xl shadow-amber-500/20">
-              <Zap className="h-8 w-8 text-black" />
+        <Card className="p-8 bg-gradient-to-r from-primary/10 to-transparent border-primary/20 overflow-hidden relative group">
+          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+             <Zap size={120} />
+          </div>
+          <div className="flex flex-col md:flex-row items-center gap-6 relative z-10">
+            <div className="h-16 w-16 rounded-2xl aurum-gradient flex items-center justify-center shrink-0 shadow-2xl shadow-primary/20">
+              <Zap className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h4 className="text-xl font-bold text-white mb-2">Predictive AI Insights</h4>
-              <p className="text-sm text-white/50 leading-relaxed max-w-3xl">
-                Based on current lead velocity and conversion efficiency, the system predicts a <span className="text-amber-400 font-bold">22% increase</span> in pipeline throughput by the end of Q3. Follow-up latency has decreased by 15 minutes on average since last week.
+              <h4 className="text-xl font-bold mb-2">Predictive AI Insights</h4>
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-3xl">
+                Based on current lead velocity and conversion efficiency, the system predicts a <span className="text-primary font-bold">22% increase</span> in pipeline throughput by the end of Q3. Follow-up latency has decreased by 15 minutes on average since last week.
               </p>
             </div>
           </div>
