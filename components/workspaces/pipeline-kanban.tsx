@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { cn } from '@/lib/cn';
 import { useLeadsStore } from '@/lib/store/leads';
 import Link from 'next/link';
 import { formatFollowUp } from '@/lib/utils-crm';
