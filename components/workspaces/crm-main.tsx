@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo } from 'react';
+import { cn } from '@/lib/cn';
 import { motion } from 'framer-motion';
 import { 
   Users, 
