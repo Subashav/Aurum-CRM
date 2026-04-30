@@ -5,7 +5,7 @@ import { cn } from '@/lib/cn';
 
 type Column = {
   key: string;
-  title: string;
+  title: React.ReactNode;
   width?: string;
   render?: (row: any) => React.ReactNode;
   editable?: boolean;
