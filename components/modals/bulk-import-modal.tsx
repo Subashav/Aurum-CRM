@@ -16,6 +16,7 @@ interface BulkImportModalProps {
 
 export function BulkImportModal({ isOpen, onClose }: BulkImportModalProps) {
   const { createLead } = useLeadsStore();
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const [pastedData, setPastedData] = useState<string>('');
   const [parsedRows, setParsedRows] = useState<string[][]>([]);
   const [headers, setHeaders] = useState<string[]>([]);
@@ -63,6 +64,24 @@ export function BulkImportModal({ isOpen, onClose }: BulkImportModalProps) {
     setMapping(newMapping);
     setStep(2);
   };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target?.result as string;
+      if (text) processText(text);
+    };
+    reader.readAsText(file);
+  };
+
+  React.useEffect(() => {
+    if (isOpen && step === 1) {
+      setTimeout(() => textareaRef.current?.focus(), 100);
+    }
+  }, [isOpen, step]);
 
   const handleImport = () => {
     const importData = parsedRows.slice(1); // Skip headers
@@ -149,20 +168,35 @@ export function BulkImportModal({ isOpen, onClose }: BulkImportModalProps) {
 
               <div 
                 className="relative group min-h-[300px] rounded-2xl border-2 border-dashed border-border hover:border-primary/40 transition-all flex flex-col items-center justify-center bg-muted/20"
-                onPaste={handlePaste}
+                onClick={() => textareaRef.current?.focus()}
               >
                 <div className="text-center space-y-4 p-12 group-hover:scale-105 transition-transform">
                   <div className="h-16 w-16 rounded-2xl bg-muted flex items-center justify-center mx-auto text-muted-foreground">
-                    <Copy size={32} />
+                    <Upload size={32} />
                   </div>
                   <div>
                     <p className="text-sm font-bold">Paste your Excel data here</p>
-                    <p className="text-xs text-muted-foreground mt-1">Click here and press Ctrl+V to paste from your spreadsheet</p>
+                    <p className="text-xs text-muted-foreground mt-1">Click here and press Ctrl+V to paste, or</p>
+                    <div className="mt-4">
+                      <input 
+                        type="file" 
+                        accept=".csv,.txt" 
+                        onChange={handleFileUpload} 
+                        className="hidden" 
+                        id="file-upload" 
+                      />
+                      <label 
+                        htmlFor="file-upload"
+                        className="cursor-pointer text-[10px] font-black uppercase tracking-widest text-primary hover:underline"
+                      >
+                        Browse CSV/Text Files
+                      </label>
+                    </div>
                   </div>
                 </div>
                 <textarea 
-                  className="absolute inset-0 opacity-0 cursor-pointer"
-                  autoFocus
+                  ref={textareaRef}
+                  className="absolute inset-0 opacity-[0.01] cursor-pointer"
                   onPaste={handlePaste}
                   onChange={(e) => processText(e.target.value)}
                   value={pastedData}
