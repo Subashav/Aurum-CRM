@@ -19,6 +19,20 @@ export default function SettingsPage() {
     { label: 'Workflow Prefs', icon: Sliders },
   ];
 
+  const [avatar, setAvatar] = React.useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatar(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <WorkspaceShell 
       title="User Settings" 
@@ -54,11 +68,27 @@ export default function SettingsPage() {
               
               <div className="space-y-8">
                 <div className="flex items-center gap-6 p-4 rounded-2xl bg-muted/20 border border-border/50">
-                  <div className="h-20 w-20 rounded-full aurum-gradient flex items-center justify-center text-4xl font-black text-white shadow-2xl shadow-primary/20 ring-4 ring-background">
-                    A
+                  <div className="h-20 w-20 rounded-full aurum-gradient flex items-center justify-center text-4xl font-black text-white shadow-2xl shadow-primary/20 ring-4 ring-background overflow-hidden">
+                    {avatar ? (
+                      <img src={avatar} alt="Avatar" className="h-full w-full object-cover" />
+                    ) : (
+                      "A"
+                    )}
                   </div>
                   <div className="space-y-2">
-                    <Button variant="outline" size="sm" className="h-9 px-4 rounded-xl font-bold uppercase tracking-widest">
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      onChange={handleAvatarChange} 
+                      className="hidden" 
+                      accept="image/*" 
+                    />
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => fileInputRef.current?.click()}
+                      className="h-9 px-4 rounded-xl font-bold uppercase tracking-widest"
+                    >
                       Change Avatar
                     </Button>
                     <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">Max size: 2MB. Format: JPG, PNG</p>
