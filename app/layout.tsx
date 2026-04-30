@@ -1,32 +1,19 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { Cormorant_Garamond, IBM_Plex_Sans, IBM_Plex_Mono } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
+import { ThemeProvider } from '@/components/providers/theme-provider';
+import { Toaster } from 'sonner';
 
-const display = Cormorant_Garamond({
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-display',
-  weight: ['400', '500', '600', '700'],
-});
-
-const body = IBM_Plex_Sans({
-  subsets: ['latin'],
-  variable: '--font-body',
-  weight: ['400', '500', '600', '700'],
-});
-
-const mono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  variable: '--font-mono',
-  weight: ['400', '500', '600'],
+  variable: '--font-inter',
 });
 
 export const metadata: Metadata = {
-  title: 'Aurum CRM',
-  description: 'Enterprise lead management and revenue operations dashboard.',
+  title: 'Aurum CRM | Enterprise Revenue Operations',
+  description: 'Premium enterprise-grade CRM for modern high-growth teams.',
 };
-
-import { Toaster } from 'sonner';
 
 export default function RootLayout({
   children,
@@ -34,11 +21,12 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable} theme-dark`}>
-      <body>
-        <Toaster theme="dark" position="top-right" />
-        <div className="noise" aria-hidden="true" />
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.variable} font-sans`}>
+        <ThemeProvider>
+          <Toaster richColors position="top-right" />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

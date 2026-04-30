@@ -1,27 +1,21 @@
-'use client';
+"use client";
 
 import React from 'react';
 import { useLeadsStore } from '@/lib/store/leads';
 import Link from 'next/link';
 import { formatFollowUp } from '@/lib/utils-crm';
+import { motion } from 'framer-motion';
+import { MoreHorizontal, Plus, GripVertical, Clock, ArrowUpRight } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 const STAGES = ['New Lead', 'Initial Contact', 'Follow-up', 'Qualified', 'Proposal Sent', 'Negotiation', 'Converted', 'Lost'] as const;
 
-const STAGE_COLORS: Record<string, string> = {
-  'New Lead': 'bg-blue-500/20 border-blue-500/50',
-  'Initial Contact': 'bg-purple-500/20 border-purple-500/50',
-  'Follow-up': 'bg-yellow-500/20 border-yellow-500/50',
-  'Qualified': 'bg-sky-500/20 border-sky-500/50',
-  'Proposal Sent': 'bg-indigo-500/20 border-indigo-500/50',
-  'Negotiation': 'bg-orange-500/20 border-orange-500/50',
-  'Converted': 'bg-green-500/20 border-green-500/50',
-  'Lost': 'bg-red-500/20 border-red-500/50',
-};
-
 const PRIORITY_COLORS: Record<string, string> = {
-  High: 'bg-red-500/30',
-  Medium: 'bg-yellow-500/30',
-  Low: 'bg-green-500/30',
+  High: 'text-rose-500 bg-rose-500/10 border-rose-500/20',
+  Medium: 'text-amber-500 bg-amber-500/10 border-amber-500/20',
+  Low: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20',
 };
 
 export function PipelineKanban() {
@@ -35,73 +29,95 @@ export function PipelineKanban() {
     {} as Record<string, typeof leads>
   );
 
-
-
   return (
-    <div className="rounded-2xl border border-white/10 bg-black/40 p-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-2">
         <div>
-          <h3 className="text-xl font-bold text-white">Prospect Pipeline</h3>
-          <p className="text-sm text-white/40">Monitor movement across all conversion stages.</p>
+          <h3 className="text-2xl font-bold tracking-tight">Sales Pipeline</h3>
+          <p className="text-sm text-muted-foreground">Manage and track deal progress across all conversion stages.</p>
         </div>
-        <div className="flex gap-3">
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] uppercase tracking-widest text-white/30">Total active</span>
-            <span className="text-lg font-bold text-white">{leads.length}</span>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center -space-x-2 mr-4">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="h-8 w-8 rounded-full border-2 border-background bg-muted flex items-center justify-center overflow-hidden shadow-sm">
+                <div className="h-full w-full aurum-gradient opacity-20" />
+              </div>
+            ))}
+            <div className="h-8 w-8 rounded-full border-2 border-background bg-muted flex items-center justify-center text-[10px] font-bold text-muted-foreground shadow-sm">
+              +12
+            </div>
           </div>
+          <Button variant="outline" size="sm" className="hidden md:flex gap-2">
+            <Plus size={14} />
+            New Deal
+          </Button>
         </div>
       </div>
 
-      {/* Kanban Board - Scrollable horizontal container */}
-      <div className="flex gap-6 overflow-x-auto pb-6 custom-scrollbar">
-        {STAGES.map((stage) => (
+      <div className="flex gap-4 overflow-x-auto pb-6 scrollbar-hide select-none px-2">
+        {STAGES.map((stage, stageIndex) => (
           <div
             key={stage}
-            className="flex-shrink-0 w-80 bg-white/[0.02] rounded-2xl border border-white/5 p-4 flex flex-col"
+            className="flex-shrink-0 w-80 flex flex-col gap-4"
           >
-            <div className="mb-5 flex items-center justify-between">
-              <div>
-                <h4 className="font-bold text-white">{stage}</h4>
-                <p className="text-[10px] uppercase tracking-tighter text-white/30">
-                  {leadsByStage[stage].length} leads
-                </p>
+            <div className="flex items-center justify-between px-2">
+              <div className="flex items-center gap-2">
+                <h4 className="text-sm font-bold tracking-tight">{stage}</h4>
+                <Badge variant="outline" className="text-[10px] bg-muted/50 border-none font-bold">
+                  {leadsByStage[stage].length}
+                </Badge>
               </div>
+              <button className="text-muted-foreground hover:text-foreground transition-colors p-1">
+                <MoreHorizontal size={14} />
+              </button>
             </div>
 
-            {/* Cards */}
-            <div className="space-y-4 flex-1">
-              {leadsByStage[stage].map((lead) => (
-                <Link
+            <div className="flex-1 space-y-3 min-h-[500px] p-2 rounded-2xl bg-muted/30 border border-transparent hover:border-border/50 transition-all">
+              {leadsByStage[stage].map((lead, leadIndex) => (
+                <motion.div
                   key={lead.id}
-                  href={`/leads/${lead.id}`}
-                  className={`group block p-4 rounded-xl border border-white/10 bg-white/5 transition-all hover:border-amber-500/40 hover:bg-white/[0.08] hover:shadow-2xl hover:shadow-amber-500/10 ${STAGE_COLORS[stage]}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: (stageIndex * 0.1) + (leadIndex * 0.05) }}
                 >
-                  <div className="mb-3">
-                    <div className="flex justify-between items-start gap-2">
-                      <div className="min-w-0">
-                        <p className="text-sm font-bold text-white truncate group-hover:text-amber-300 transition-colors">{lead.name}</p>
-                        <p className="text-[11px] text-white/40 truncate">{lead.company}</p>
+                  <Link href={`/leads/${lead.id}`}>
+                    <Card className="p-4 bg-card/60 hover:bg-card hover:border-primary/30 group relative shadow-sm hover:shadow-md transition-all border-border/60">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="min-w-0">
+                          <p className="text-sm font-black group-hover:text-primary transition-colors tracking-tight">{lead.name}</p>
+                          <p className="text-[11px] text-muted-foreground font-medium truncate">{lead.company}</p>
+                        </div>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <Badge className={cn("text-[8px] font-black uppercase px-1.5 py-0", PRIORITY_COLORS[lead.priority])}>
+                            {lead.priority}
+                          </Badge>
+                        </div>
                       </div>
-                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${PRIORITY_COLORS[lead.priority]} text-white`}>
-                        {lead.priority}
-                      </span>
-                    </div>
-                  </div>
 
-                  <div className="pt-3 border-t border-white/5 flex items-center justify-end">
-                    <div className="flex items-center gap-1.5 text-[10px] text-white/50">
-                      <span className="h-1 w-1 rounded-full bg-amber-400" />
-                      {formatFollowUp(lead.followUpAt)}
-                    </div>
-                  </div>
-                </Link>
+                      <div className="flex items-center justify-between pt-3 border-t border-border/40">
+                        <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-semibold">
+                          <Clock size={12} className="text-primary" />
+                          {formatFollowUp(lead.followUpAt)}
+                        </div>
+                        <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                          <ArrowUpRight size={10} className="group-hover:text-primary transition-colors" />
+                        </div>
+                      </div>
+                    </Card>
+                  </Link>
+                </motion.div>
               ))}
 
               {leadsByStage[stage].length === 0 && (
-                <div className="py-12 flex flex-col items-center justify-center text-white/10 border-2 border-dashed border-white/[0.02] rounded-xl">
-                  <p className="text-xs font-medium">Empty Stage</p>
+                <div className="py-12 flex flex-col items-center justify-center text-muted-foreground/20 border-2 border-dashed border-border/20 rounded-2xl">
+                  <p className="text-[10px] font-bold uppercase tracking-widest">No Active Deals</p>
                 </div>
               )}
+              
+              <button className="w-full py-2 flex items-center justify-center gap-2 rounded-xl border border-dashed border-border/40 text-muted-foreground/40 hover:text-primary/60 hover:border-primary/20 hover:bg-primary/5 transition-all group">
+                <Plus size={14} className="group-hover:scale-110 transition-transform" />
+                <span className="text-[10px] font-bold uppercase tracking-widest">Quick Add</span>
+              </button>
             </div>
           </div>
         ))}
