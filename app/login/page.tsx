@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Github, Chrome, Lock, Mail, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Github, Chrome, Lock, Mail, ArrowRight, CheckCircle2, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function LoginPage() {
