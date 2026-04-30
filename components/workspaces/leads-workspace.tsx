@@ -17,6 +17,7 @@ import {
   Users2,
   Plus,
   ChevronDown,
+  FileSpreadsheet,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -27,6 +28,7 @@ import { type Lead } from '@/lib/crm-data';
 import { cn } from '@/lib/cn';
 import { useLeadsStore } from '@/lib/store/leads';
 import { LeadFormModal } from '@/components/modals/lead-form-modal';
+import { BulkImportModal } from '@/components/modals/bulk-import-modal';
 import { toast } from 'sonner';
 
 import { useSearchParams } from 'next/navigation';
@@ -51,6 +53,7 @@ export function LeadsWorkspace() {
   } = useLeadsStore();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -127,6 +130,14 @@ export function LeadsWorkspace() {
               >
                 <Plus className="h-3.5 w-3.5" />
                 New Lead
+              </button>
+
+              <button
+                onClick={() => setIsImportOpen(true)}
+                className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 transition hover:bg-white/10 text-white/70"
+              >
+                <FileSpreadsheet className="h-3.5 w-3.5" />
+                Import Leads
               </button>
 
               {selectedIds.length > 0 && (
@@ -330,6 +341,7 @@ export function LeadsWorkspace() {
       </Card>
 
       <LeadFormModal isOpen={isFormOpen} lead={editingLead} onClose={handleFormClose} />
+      <BulkImportModal isOpen={isImportOpen} onClose={() => setIsImportOpen(false)} />
     </div>
   );
 }

@@ -7,8 +7,9 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Github, Chrome, Lock, Mail, ArrowRight, CheckCircle2, Zap } from 'lucide-react';
+import { Github, Chrome, Lock, Mail, ArrowRight, CheckCircle2, Zap, Globe, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
+import { Logo } from '@/components/navigation/logo';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,11 +32,8 @@ export default function LoginPage() {
       {/* Left Side: Brand & Visuals */}
       <div className="hidden md:flex flex-col justify-between w-1/2 p-12 bg-muted/20 border-r border-border relative">
         <div className="absolute inset-0 aurum-gradient opacity-[0.02]" />
-        <Link href="/" className="flex items-center gap-2 relative z-10">
-          <div className="h-8 w-8 rounded-lg aurum-gradient flex items-center justify-center shadow-lg shadow-primary/20">
-            <span className="text-white font-black text-xl italic">A</span>
-          </div>
-          <span className="font-bold tracking-tighter text-lg">AurumCRM</span>
+        <Link href="/" className="relative z-10 hover:opacity-80 transition-opacity">
+          <Logo size="md" />
         </Link>
 
         <div className="relative z-10 space-y-8">
@@ -155,44 +153,4 @@ export default function LoginPage() {
   );
 }
 
-// Re-using same icons from landing for consistency
-function Globe(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <line x1="2" y1="12" x2="22" y2="12" />
-      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-    </svg>
-  )
-}
-
-function ShieldCheck(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-      <path d="m9 12 2 2 4-4" />
-    </svg>
-  )
-}
+// No local SVG helpers needed, using Lucide icons for consistency

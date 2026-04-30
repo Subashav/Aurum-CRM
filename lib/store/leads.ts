@@ -3,20 +3,31 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { Lead, LeadDetail, PipelineStage, LeadStatus } from '@/lib/crm-data';
 import { leads as initialLeads, leadDetails as initialLeadDetails } from '@/lib/crm-data';
 
+/**
+ * Main store for managing leads, their details, and UI filter/sort states.
+ */
 interface LeadsStore {
+  /** List of all lead summaries */
   leads: Lead[];
+  /** Detailed information for each lead, indexed by ID */
   leadDetails: Record<string, LeadDetail>;
+  /** Current search query for filtering leads */
   searchQuery: string;
+  /** Filter leads by their current pipeline stage */
   filterStage: PipelineStage | null;
+  /** Filter leads by their status */
   filterStatus: LeadStatus | null;
-  sortBy: 'name' | 'updatedBy' | 'followUpAt' | 'priority';
+  /** Current sorting field */
+  sortBy: 'name' | 'updatedBy' | 'followUpAt' | 'priority' | 'createdAt';
+  /** Current sorting direction */
   sortOrder: 'asc' | 'desc';
+
   
   // Setters
   setSearchQuery: (query: string) => void;
   setFilterStage: (stage: PipelineStage | null) => void;
   setFilterStatus: (status: LeadStatus | null) => void;
-  setSortConfig: (sortBy: 'name' | 'updatedBy' | 'followUpAt' | 'priority', sortOrder: 'asc' | 'desc') => void;
+  setSortConfig: (sortBy: 'name' | 'updatedBy' | 'followUpAt' | 'priority' | 'createdAt', sortOrder: 'asc' | 'desc') => void;
   
   // Actions
   createLead: (lead: Partial<Lead>) => void;
@@ -44,7 +55,7 @@ export const useLeadsStore = create<LeadsStore>()(
       searchQuery: '',
       filterStage: null,
       filterStatus: null,
-      sortBy: 'updatedBy',
+      sortBy: 'createdAt',
       sortOrder: 'desc',
 
       setSearchQuery: (query) => set({ searchQuery: query }),
@@ -76,6 +87,7 @@ export const useLeadsStore = create<LeadsStore>()(
           lastReach: 'Just now',
           nextAction: lead.nextAction || 'Initial reach out',
           missingFields: [],
+          createdAt: new Date().toISOString(),
         };
 
         const newDetail: LeadDetail = {
@@ -147,6 +159,9 @@ export const useLeadsStore = create<LeadsStore>()(
         };
       }),
 
+      /**
+       * Returns leads filtered by search query, stage, and status.
+       */
       getFilteredLeads: () => {
         const state = get();
         return state.leads.filter((lead) => {
@@ -161,6 +176,9 @@ export const useLeadsStore = create<LeadsStore>()(
         });
       },
 
+      /**
+       * Returns filtered leads sorted by the current sort configuration.
+       */
       getSortedLeads: () => {
         const filtered = get().getFilteredLeads();
         const { sortBy, sortOrder } = get();
@@ -178,6 +196,7 @@ export const useLeadsStore = create<LeadsStore>()(
               break;
             case 'updatedBy': aVal = (a.updatedBy || '').toLowerCase(); bVal = (b.updatedBy || '').toLowerCase(); break;
             case 'followUpAt': aVal = a.followUpAt; bVal = b.followUpAt; break;
+            case 'createdAt': aVal = a.createdAt; bVal = b.createdAt; break;
             default: aVal = a.id; bVal = b.id; break;
           }
 

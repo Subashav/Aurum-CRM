@@ -40,6 +40,7 @@ export type Lead = {
   nextAction: string;
   followUpAt: string;
   missingFields: string[];
+  createdAt: string;
   updatedBy?: string;
   lastContacted?: string;
 };
@@ -80,6 +81,7 @@ export const leads: Lead[] = [
     priority: 'High',
     nextAction: 'Send revised proposal and follow up by 4:30 PM',
     followUpAt: 'Today 4:30 PM',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2).toISOString(), // 2 days ago
     missingFields: ['Phone', 'WhatsApp'],
     updatedBy: 'Maya',
     lastContacted: 'Today 11:20 AM',
@@ -105,6 +107,7 @@ export const leads: Lead[] = [
     priority: 'Medium',
     nextAction: 'Confirm demo slot and collect missing email',
     followUpAt: 'Tomorrow 10:00 AM',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(), // 5 days ago
     missingFields: ['Email'],
     updatedBy: 'Arjun',
     lastContacted: 'Yesterday 5:40 PM',
@@ -130,6 +133,7 @@ export const leads: Lead[] = [
     priority: 'High',
     nextAction: 'Finalize pricing and approvals',
     followUpAt: 'Today 6:15 PM',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 1).toISOString(), // 1 day ago
     missingFields: [],
     updatedBy: 'Rohan',
     lastContacted: 'Today 9:05 AM',
@@ -155,6 +159,7 @@ export const leads: Lead[] = [
     priority: 'Low',
     nextAction: 'Send intro note and WhatsApp template',
     followUpAt: 'Today 8:00 PM',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 10).toISOString(), // 10 days ago
     missingFields: ['Designation', 'Phone'],
     updatedBy: 'Maya',
     lastContacted: 'Today 8:40 AM',

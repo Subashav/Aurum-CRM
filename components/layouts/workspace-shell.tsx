@@ -20,7 +20,7 @@ import {
 import { cn } from '@/lib/cn';
 import { useState, useEffect } from 'react';
 import { ThemeToggle } from '@/components/navigation/theme-toggle';
-import { CommandPalette } from '@/components/navigation/command-palette';
+import { Logo } from '@/components/navigation/logo';
 
 const navItems = [
   { group: "Overview", items: [
@@ -66,27 +66,46 @@ export function WorkspaceShell({
       >
         <div className="p-6 flex items-center justify-between">
           <AnimatePresence mode="wait">
-            {!isCollapsed && (
+            {!isCollapsed ? (
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
                 className="flex items-center gap-2"
               >
-                <div className="h-8 w-8 rounded-lg aurum-gradient flex items-center justify-center shadow-lg shadow-primary/20">
-                  <span className="text-white font-black text-xl italic">A</span>
-                </div>
-                <span className="font-bold tracking-tight text-lg aurum-text-gradient">AurumCRM</span>
+                <Logo size="md" />
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="mx-auto"
+              >
+                <Logo iconOnly size="md" />
               </motion.div>
             )}
           </AnimatePresence>
-          <button 
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground"
-          >
-            {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-          </button>
+          {!isCollapsed && (
+            <button 
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground"
+            >
+              <ChevronLeft size={16} />
+            </button>
+          )}
         </div>
+
+        {isCollapsed && (
+          <div className="px-4 py-4 flex justify-center">
+            <button 
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
 
         <div className="flex-1 overflow-y-auto px-4 py-2 space-y-8 scrollbar-hide">
           {navItems.map((group) => (

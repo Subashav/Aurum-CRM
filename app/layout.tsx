@@ -11,8 +11,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Aurum CRM | Enterprise Revenue Operations',
-  description: 'Premium enterprise-grade CRM for modern high-growth teams.',
+  title: 'Aurum | Enterprise Revenue Operations',
+  description: 'Premium enterprise-grade platform for modern high-growth teams.',
 };
 
 export default function RootLayout({

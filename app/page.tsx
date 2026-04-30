@@ -5,18 +5,16 @@ import Link from 'next/link';
 import { ArrowRight, CheckCircle2, ShieldCheck, Zap, Globe, BarChart3, Users, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Logo } from '@/components/navigation/logo';
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background font-sans overflow-x-hidden">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 h-20 bg-background/60 backdrop-blur-xl border-b border-border z-[100] flex items-center justify-between px-6 lg:px-12">
-        <div className="flex items-center gap-2">
-          <div className="h-9 w-9 rounded-lg aurum-gradient flex items-center justify-center shadow-lg shadow-primary/20">
-            <span className="text-white font-black text-2xl italic">A</span>
-          </div>
-          <span className="font-bold tracking-tighter text-xl">AurumCRM</span>
-        </div>
+        <Link href="/" className="hover:opacity-80 transition-opacity">
+          <Logo size="lg" />
+        </Link>
         
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
           <Link href="#features" className="hover:text-foreground transition-colors">Features</Link>
@@ -169,12 +167,9 @@ export default function LandingPage() {
       <footer className="py-20 border-t border-border px-6 lg:px-12 bg-muted/5">
         <div className="max-w-[1400px] mx-auto grid grid-cols-2 md:grid-cols-5 gap-12">
           <div className="col-span-2">
-             <div className="flex items-center gap-2 mb-6">
-                <div className="h-8 w-8 rounded-lg aurum-gradient flex items-center justify-center">
-                  <span className="text-white font-black text-xl italic">A</span>
-                </div>
-                <span className="font-bold tracking-tighter text-lg">AurumCRM</span>
-              </div>
+             <Link href="/" className="flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity">
+                <Logo size="md" />
+              </Link>
               <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
                 The next-generation CRM for modern revenue teams. Built with love in San Francisco.
               </p>

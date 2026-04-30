@@ -5,8 +5,8 @@ import { cn } from '@/lib/cn';
 import { useLeadsStore } from '@/lib/store/leads';
 import Link from 'next/link';
 import { formatFollowUp } from '@/lib/utils-crm';
-import { motion } from 'framer-motion';
-import { MoreHorizontal, Plus, GripVertical, Clock, ArrowUpRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MoreHorizontal, Plus, GripVertical, Clock, ArrowUpRight, SortAsc, SortDesc, Calendar, Filter } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,15 +19,24 @@ const PRIORITY_COLORS: Record<string, string> = {
   Low: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20',
 };
 
+/**
+ * PipelineKanban Component
+ * 
+ * Provides a drag-and-drop style Kanban board for visualizing the sales pipeline.
+ * Leads are grouped by their current stage and sorted based on the global sort configuration.
+ */
 export function PipelineKanban() {
-  const { leads } = useLeadsStore();
+  // Access global leads state and sort utilities
+  const { getSortedLeads, sortBy, sortOrder, setSortConfig } = useLeadsStore();
+  const sortedLeads = getSortedLeads();
 
+  // Group leads into stages for column rendering
   const leadsByStage = STAGES.reduce(
     (acc, stage) => {
-      acc[stage] = leads.filter((lead) => lead.stage === stage);
+      acc[stage] = sortedLeads.filter((lead) => lead.stage === stage);
       return acc;
     },
-    {} as Record<string, typeof leads>
+    {} as Record<string, typeof sortedLeads>
   );
 
   return (
@@ -38,17 +47,17 @@ export function PipelineKanban() {
           <p className="text-sm text-muted-foreground">Manage and track deal progress across all conversion stages.</p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="flex items-center -space-x-2 mr-4">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="h-8 w-8 rounded-full border-2 border-background bg-muted flex items-center justify-center overflow-hidden shadow-sm">
-                <div className="h-full w-full aurum-gradient opacity-20" />
-              </div>
-            ))}
-            <div className="h-8 w-8 rounded-full border-2 border-background bg-muted flex items-center justify-center text-[10px] font-bold text-muted-foreground shadow-sm">
-              +12
-            </div>
-          </div>
-          <Button variant="outline" size="sm" className="hidden md:flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setSortConfig('createdAt', sortOrder === 'desc' ? 'asc' : 'desc')}
+            className="gap-2 h-8 font-bold text-[10px] uppercase tracking-wider bg-muted/50 border-border/40 hover:bg-muted"
+          >
+            {sortOrder === 'asc' ? <SortAsc size={14} /> : <SortDesc size={14} />}
+            Date: {sortOrder === 'desc' ? 'Newest First' : 'Oldest First'}
+          </Button>
+
+          <Button variant="outline" size="sm" className="hidden md:flex gap-2 h-8 aurum-gradient text-white border-none hover:opacity-90 shadow-sm">
             <Plus size={14} />
             New Deal
           </Button>
@@ -74,40 +83,50 @@ export function PipelineKanban() {
             </div>
 
             <div className="flex-1 space-y-3 min-h-[500px] p-2 rounded-2xl bg-muted/30 border border-transparent hover:border-border/50 transition-all">
-              {leadsByStage[stage].map((lead, leadIndex) => (
-                <motion.div
-                  key={lead.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: (stageIndex * 0.1) + (leadIndex * 0.05) }}
-                >
-                  <Link href={`/leads/${lead.id}`}>
-                    <Card className="p-4 bg-card/60 hover:bg-card hover:border-primary/30 group relative shadow-sm hover:shadow-md transition-all border-border/60">
-                      <div className="flex justify-between items-start mb-3">
-                        <div className="min-w-0">
-                          <p className="text-sm font-black group-hover:text-primary transition-colors tracking-tight">{lead.name}</p>
-                          <p className="text-[11px] text-muted-foreground font-medium truncate">{lead.company}</p>
+              <AnimatePresence mode="popLayout">
+                {leadsByStage[stage].map((lead, leadIndex) => (
+                  <motion.div
+                    key={lead.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ 
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 25,
+                      delay: leadIndex * 0.05 
+                    }}
+                  >
+                    <Link href={`/leads/${lead.id}`}>
+                      <Card className="p-4 bg-card/60 hover:bg-card hover:border-primary/30 group relative shadow-sm hover:shadow-md transition-all border-border/60 overflow-hidden">
+                        <div className="absolute top-0 left-0 w-1 h-full aurum-gradient opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="min-w-0">
+                            <p className="text-sm font-black group-hover:text-primary transition-colors tracking-tight">{lead.name}</p>
+                            <p className="text-[11px] text-muted-foreground font-medium truncate">{lead.company}</p>
+                          </div>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <Badge className={cn("text-[8px] font-black uppercase px-1.5 py-0", PRIORITY_COLORS[lead.priority])}>
+                              {lead.priority}
+                            </Badge>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          <Badge className={cn("text-[8px] font-black uppercase px-1.5 py-0", PRIORITY_COLORS[lead.priority])}>
-                            {lead.priority}
-                          </Badge>
-                        </div>
-                      </div>
 
-                      <div className="flex items-center justify-between pt-3 border-t border-border/40">
-                        <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-semibold">
-                          <Clock size={12} className="text-primary" />
-                          {formatFollowUp(lead.followUpAt)}
+                        <div className="flex items-center justify-between pt-3 border-t border-border/40">
+                          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-semibold">
+                            <Calendar size={12} className="text-primary" />
+                            {new Date(lead.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                          </div>
+                          <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                            <ArrowUpRight size={10} className="group-hover:text-primary transition-colors" />
+                          </div>
                         </div>
-                        <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                          <ArrowUpRight size={10} className="group-hover:text-primary transition-colors" />
-                        </div>
-                      </div>
-                    </Card>
-                  </Link>
-                </motion.div>
-              ))}
+                      </Card>
+                    </Link>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
 
               {leadsByStage[stage].length === 0 && (
                 <div className="py-12 flex flex-col items-center justify-center text-muted-foreground/20 border-2 border-dashed border-border/20 rounded-2xl">
