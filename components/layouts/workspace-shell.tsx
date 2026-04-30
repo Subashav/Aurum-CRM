@@ -24,7 +24,7 @@ import { CommandPalette } from '@/components/navigation/command-palette';
 
 const navItems = [
   { group: "Overview", items: [
-    { href: '/', label: 'Dashboard', icon: Gauge },
+    { href: '/dashboard', label: 'Dashboard', icon: Gauge },
     { href: '/analytics', label: 'Analytics', icon: BarChart3 },
   ]},
   { group: "Operations", items: [
