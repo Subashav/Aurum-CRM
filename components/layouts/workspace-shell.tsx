@@ -101,14 +101,14 @@ export function WorkspaceShell({
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 px-2 py-2 rounded-md transition-all duration-200 group relative",
+                    "flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-300 group relative",
                     isActive(item.href) 
-                      ? "bg-primary/10 text-primary" 
+                      ? "aurum-gradient text-white shadow-lg shadow-primary/20 scale-[1.02]" 
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
                 >
-                  <item.icon size={isCollapsed ? 20 : 18} strokeWidth={isActive(item.href) ? 2.5 : 2} className="shrink-0" />
-                  {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
+                  <item.icon size={isCollapsed ? 20 : 18} strokeWidth={isActive(item.href) ? 2.5 : 2} className={cn("shrink-0 transition-colors", isActive(item.href) ? "text-white" : "group-hover:text-primary")} />
+                  {!isCollapsed && <span className="text-xs font-black uppercase tracking-widest">{item.label}</span>}
                   
                   {isActive(item.href) && (
                     <motion.div
