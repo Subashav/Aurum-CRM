@@ -1,0 +1,182 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme tokens: dark and light themes must be explicit and use true black/white backgrounds
+   - Use the `.theme-dark` or `.theme-light` class on <html> or <body> to switch.
+   - Respect `prefers-color-scheme` as a sensible default but explicit classes win. */
+
+:root {
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Satoshi', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+.theme-dark {
+  --bg-color: #000000; /* TRUE BLACK */
+  --fg-color: rgba(255,255,255,0.94);
+  --panel: rgba(255,255,255,0.03);
+  --panel-strong: rgba(255,255,255,0.04);
+  --border: rgba(255,255,255,0.06);
+  --muted: rgba(255,255,255,0.50);
+  --accent: 46 86% 62%; /* HSL for electric-blue-ish accents used via hsl() when needed */
+  --success: 142 71% 45%;
+  --warning: 42 96% 62%;
+  --danger: 2 84% 66%;
+}
+
+.theme-light {
+  --bg-color: #ffffff; /* TRUE WHITE */
+  --fg-color: rgba(6,6,6,0.92);
+  --panel: rgba(0,0,0,0.04);
+  --panel-strong: rgba(0,0,0,0.06);
+  --border: rgba(0,0,0,0.06);
+  --muted: rgba(0,0,0,0.55);
+  --accent: 215 95% 54%; /* electric blue in hsl space */
+  --success: 142 71% 45%;
+  --warning: 42 96% 62%;
+  --danger: 2 84% 66%;
+}
+
+/* Default: respect system preference */
+@media (prefers-color-scheme: dark) {
+  :root:not(.theme-light) { /* if not forced to light */
+    --bg-color: #000000;
+    --fg-color: rgba(255,255,255,0.94);
+    --panel: rgba(255,255,255,0.03);
+    --panel-strong: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.06);
+    --muted: rgba(255,255,255,0.50);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not(.theme-dark) {
+    --bg-color: #ffffff;
+    --fg-color: rgba(6,6,6,0.92);
+    --panel: rgba(0,0,0,0.04);
+    --panel-strong: rgba(0,0,0,0.06);
+    --border: rgba(0,0,0,0.06);
+    --muted: rgba(0,0,0,0.55);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--fg-color);
+  font-family: var(--font-body), system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Subtle directional sheen for the dark theme only */
+body.theme-dark::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, rgba(255,255,255,0.02), transparent 30%);
+  mix-blend-mode: screen;
+  z-index: -2;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.noise {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
+}
+
+.grid-glow {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.text-display {
+  font-family: var(--font-display), Georgia, serif;
+  letter-spacing: -0.02em;
+}
+
+.text-shimmer {
+  background: linear-gradient(120deg, #fef3c7 0%, #ffffff 38%, #a5f3fc 70%, #fde68a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.glass-edge {
+  border: 1px solid var(--border);
+  background-color: rgba(255,255,255,0.02);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.02),
+    0 18px 60px rgba(0,0,0,0.36);
+}
+
+.lift-on-hover {
+  transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 240ms ease;
+}
+
+.lift-on-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.42);
+}
+
+.ambient-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(45px);
+  opacity: 0.32;
+  pointer-events: none;
+  animation: drift 9s ease-in-out infinite;
+}
+
+.ambient-orb.a {
+  width: 260px;
+  height: 260px;
+  background: rgba(250, 204, 21, 0.22);
+  top: -90px;
+  right: -70px;
+}
+
+.ambient-orb.b {
+  width: 220px;
+  height: 220px;
+  background: rgba(56, 189, 248, 0.22);
+  bottom: -80px;
+  left: -50px;
+  animation-delay: 1.5s;
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0) scale(1.06);
+  }
+}
